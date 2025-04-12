@@ -1,7 +1,14 @@
 <template>
-    <footer class="app-footer">2 more to do, 1 done</footer>
+    <footer class="app-footer">{{ activeTodos }} more to do, {{ doneTodos }} done</footer>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+interface Props {
+    doneTodos: number
+    activeTodos: number
+}
+
+defineProps<Props>()
+</script>
 
 <style scoped></style>

@@ -5,12 +5,12 @@
         <AppFilters :active-filter="activeFilter" @switch-filter="switchFilter" />
 
         <main class="app-main">
-            <AppTodoList :todos="todos" @delete-todo="deleteTodo" @toggle-todo="toggleTodo" />
+            <AppTodoList :todos="filteredTodos" @delete-todo="deleteTodo" @toggle-todo="toggleTodo" />
 
             <AppAddTodo @create-todo-item="createTodoItem" />
         </main>
 
-        <AppFooter />
+        <AppFooter :active-todos="activeTodos.length" :done-todos="doneTodos.length" />
     </div>
 </template>
 
@@ -21,7 +21,7 @@ import AppFooter from './components/AppFooter.vue'
 import AppAddTodo from './components/AppAddTodo.vue'
 import AppTodoList from './components/AppTodoList.vue'
 import type { Todo } from './interfaces/Todos'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { Filters } from './types/Filters'
 
 const todos = ref<Todo[]>([
@@ -29,7 +29,25 @@ const todos = ref<Todo[]>([
     { id: 1, text: 'Learn the basics of Typescript', completed: false },
     { id: 2, text: 'Subscribe to the channel', completed: false }
 ])
-const activeFilter = ref<Filters>('Active')
+const activeFilter = ref<Filters>('All')
+
+const activeTodos = computed(() => todos.value.filter((item: Todo) => !item.completed))
+const doneTodos = computed(() => todos.value.filter((item: Todo) => item.completed))
+
+const filteredTodos = computed(() => {
+    switch (activeFilter.value) {
+        case 'Active':
+            return activeTodos.value
+            break
+        case 'Done':
+            return doneTodos.value
+            break
+        case 'All':
+        default:
+            return todos.value
+            break
+    }
+})
 
 const toggleTodo = (id: number) => {
     const targetTodo = todos.value.find((item: Todo) => item.id === id)
